@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0e1113" />
+    <title>健身动作库</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">离线动作库</p>
+          <h1>健身动作库</h1>
+        </div>
+        <button class="ghost-button" id="randomButton" type="button" aria-label="随机动作">随机</button>
+      </header>
+
+      <section class="control-panel" aria-label="筛选">
+        <label class="search-box">
+          <span>搜索</span>
+          <input id="searchInput" type="search" placeholder="动作、部位、器械" autocomplete="off" />
+        </label>
+        <div class="select-row">
+          <label>
+            <span>部位</span>
+            <select id="categorySelect"></select>
+          </label>
+          <label>
+            <span>器械</span>
+            <select id="equipmentSelect"></select>
+          </label>
+          <label>
+            <span>目标肌肉</span>
+            <select id="targetSelect"></select>
+          </label>
+        </div>
+      </section>
+
+      <section class="summary-strip" aria-label="统计">
+        <div>
+          <strong id="resultCount">0</strong>
+          <span>匹配动作</span>
+        </div>
+        <div>
+          <strong id="bodyPartCount">0</strong>
+          <span>身体部位</span>
+        </div>
+        <div>
+          <strong id="equipmentCount">0</strong>
+          <span>器械类型</span>
+        </div>
+      </section>
+
+      <section class="quick-filter" id="quickFilter" aria-label="常用部位"></section>
+
+      <section class="exercise-grid" id="exerciseGrid" aria-label="动作列表"></section>
+      <button class="load-more" id="loadMoreButton" type="button">加载更多</button>
+    </main>
+
+    <aside class="detail-sheet" id="detailSheet" aria-hidden="true">
+      <div class="sheet-backdrop" id="sheetBackdrop"></div>
+      <article class="sheet-panel" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+        <button class="close-button" id="closeDetail" type="button" aria-label="关闭">×</button>
+        <div class="detail-media">
+          <img id="detailImage" alt="" />
+        </div>
+        <div class="detail-content">
+          <p class="eyebrow" id="detailMeta"></p>
+          <h2 id="detailTitle"></h2>
+          <div class="tag-row" id="detailTags"></div>
+          <ol class="steps" id="detailSteps"></ol>
+        </div>
+      </article>
+    </aside>
+
+    <script src="data/exercises.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
+
