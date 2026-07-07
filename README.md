@@ -25,7 +25,14 @@ $env:ANDROID_SDK_ROOT=$sdk
 
 ## GitHub Release 自动构建
 
-发布 GitHub Release 时，`.github/workflows/release-apk.yml` 会自动构建 release APK，并上传到该 Release 的附件中。
+推送 `v*` tag 时，`.github/workflows/release-apk.yml` 会自动构建 release APK，创建 GitHub Release，并上传 APK 到 Release 附件中。
+
+```powershell
+git tag -a v0.1.0 -m "v0.1.0"
+git push origin v0.1.0
+```
+
+也可以在 GitHub Actions 页面手动运行 `Build Release APK`，输入已有 tag 后重新构建并上传 APK。
 
 仓库需要配置这些 Actions Secrets：
 
