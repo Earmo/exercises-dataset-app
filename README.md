@@ -23,6 +23,25 @@ $env:ANDROID_SDK_ROOT=$sdk
 .\gradlew.bat :app:assembleRelease
 ```
 
+## GitHub Release 自动构建
+
+发布 GitHub Release 时，`.github/workflows/release-apk.yml` 会自动构建 release APK，并上传到该 Release 的附件中。
+
+仓库需要配置这些 Actions Secrets：
+
+- `ANDROID_RELEASE_KEYSTORE_BASE64`：release keystore 的 Base64 内容
+- `ANDROID_RELEASE_STORE_PASSWORD`：keystore 密码
+- `ANDROID_RELEASE_KEY_ALIAS`：key alias，例如 `exercises`
+- `ANDROID_RELEASE_KEY_PASSWORD`：key 密码
+
+本机生成 keystore Base64：
+
+```powershell
+[Convert]::ToBase64String([IO.File]::ReadAllBytes("$env:USERPROFILE\.android\keystores\earmo-release.jks")) | Set-Clipboard
+```
+
+把剪贴板内容粘贴到 `ANDROID_RELEASE_KEYSTORE_BASE64` 即可。
+
 ## 重新生成本地资源
 
 ```powershell
