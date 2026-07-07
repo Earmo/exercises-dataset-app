@@ -3,6 +3,12 @@ name: Build Release APK
 on:
   release:
     types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: GitHub Release tag to upload the APK to
+        required: true
+        default: v0.1.0
 
 permissions:
   contents: write
@@ -11,10 +17,15 @@ jobs:
   build-release-apk:
     name: Build and upload APK
     runs-on: ubuntu-latest
+    env:
+      RELEASE_TAG: ${{ github.event.release.tag_name || github.event.inputs.tag }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Make Gradle executable
+        run: chmod +x ./gradlew
 
       - name: Set up JDK
         uses: actions/setup-java@v4
@@ -27,8 +38,17 @@ jobs:
 
       - name: Install Android SDK packages
         run: |
-          yes | sdkmanager --licenses >/dev/null
-          sdkmanager "platforms;android-35" "build-tools;35.0.0"
+          sdk_root="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-/usr/local/lib/android/sdk}}"
+          sdk_manager="$sdk_root/cmdline-tools/latest/bin/sdkmanager"
+
+          if [ ! -x "$sdk_manager" ]; then
+            echo "::error::sdkmanager not found at $sdk_manager"
+            find /usr/local/lib/android -path "*/sdkmanager" -type f -print || true
+            exit 1
+          fi
+
+          yes | "$sdk_manager" --licenses >/dev/null
+          "$sdk_manager" "platforms;android-35" "build-tools;35.0.0"
 
       - name: Restore release signing key
         env:
@@ -59,7 +79,7 @@ jobs:
 
       - name: Prepare release asset
         run: |
-          tag="${{ github.event.release.tag_name }}"
+          tag="$RELEASE_TAG"
           safe_tag="${tag//\//-}"
           cp app/build/outputs/apk/release/app-release.apk "exercises-dataset-app-${safe_tag}.apk"
           echo "APK_PATH=exercises-dataset-app-${safe_tag}.apk" >> "$GITHUB_ENV"
@@ -67,4 +87,4 @@ jobs:
       - name: Upload APK to GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release upload "${{ github.event.release.tag_name }}" "$APK_PATH" --clobber --repo "$GITHUB_REPOSITORY"
+        run: gh release upload "$RELEASE_TAG" "$APK_PATH" --clobber --repo "$GITHUB_REPOSITORY"
